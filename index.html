@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Уурхайчин-3 Хаус</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Unbounded:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: пин хийсэн скролл-кинематик (hero → генплан → 3D → дотор → давхар), тансаг харанхуй орчин, champagne акцент */
+:root{
+  --bg:#0d0b0a; --bg2:#171311; --fg:#efe8df; --mut:#a1978b; --line:rgba(239,232,223,.14);
+  --acc:#d9b27c; --glass:rgba(24,20,18,.58);
+  --display:'Unbounded','Manrope',system-ui,sans-serif; --body:'Manrope',system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;overflow-x:hidden}
+img{display:block}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.wrap{padding-inline:max(20px,env(safe-area-inset-left,0px)) max(20px,env(safe-area-inset-right,0px));max-width:1280px;margin:0 auto}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:600}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.08;text-wrap:balance;margin:0}
+h2{font-size:clamp(26px,4vw,48px)}
+.mut{color:var(--mut)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:12px 22px;font-weight:600;font-size:13px;border:1px solid var(--line);background:transparent;text-decoration:none;transition:.25s}
+.btn.pri{background:var(--fg);color:#14110f;border-color:var(--fg)}
+.btn:hover{border-color:var(--acc)}
+.btn.pri:hover{background:var(--acc);border-color:var(--acc)}
+
+/* nav */
+nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:calc(14px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 14px max(20px,env(safe-area-inset-left,0px));background:linear-gradient(#0d0b0acc,#0d0b0a00)}
+.logo{font-family:var(--display);font-size:13px;letter-spacing:.12em;text-decoration:none}
+.logo b{color:var(--acc);font-weight:500}
+nav .links{display:flex;gap:22px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav .links a{text-decoration:none;color:var(--mut);transition:.2s}
+nav .links a:hover{color:var(--fg)}
+@media(max-width:820px){nav .links{display:none}}
+
+/* pinned scenes */
+.pin{position:relative}
+.stick{position:sticky;top:0;height:100vh;overflow:hidden}
+
+/* HERO */
+#hero{height:520vh}
+.hbg{position:absolute;inset:0}
+.hbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease, transform 6s ease;transform:scale(1.06)}
+.hbg img.on{opacity:1;transform:scale(1)}
+.hshade{position:absolute;inset:0;background:linear-gradient(90deg,#0d0b0af0 0%,#0d0b0a99 38%,#0d0b0a1f 70%),linear-gradient(0deg,#0d0b0aee,#0d0b0a00 40%)}
+.hcopy{position:absolute;left:max(20px,env(safe-area-inset-left,0px));bottom:12vh;max-width:560px;padding-right:20px}
+.hcopy h1{font-size:clamp(30px,5.2vw,68px);margin:14px 0 18px}
+.hcopy p{color:#cfc6ba;max-width:44ch;margin:0 0 26px}
+.hcopy .row{display:flex;gap:10px;flex-wrap:wrap}
+.hpanel{position:absolute;right:max(20px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-46%);width:min(330px,calc(100vw - 40px));background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:18px;padding:20px}
+.hpanel .lab{font-size:10px;letter-spacing:.22em;color:var(--mut);text-transform:uppercase}
+.hnum{font-family:var(--display);font-size:84px;line-height:1;margin:6px 0 2px;display:flex;align-items:baseline;gap:8px}
+.hnum small{font-size:12px;letter-spacing:.16em;color:var(--acc)}
+.hkind{font-weight:600;margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:600;letter-spacing:.04em;transition:.2s}
+.chip.on{background:var(--fg);color:#14110f;border-color:var(--fg)}
+.chip:hover{border-color:var(--acc)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.stats div{background:#1a1613;padding:10px 12px}
+.stats span{display:block;font-size:10px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
+.stats b{font-family:var(--display);font-weight:400;font-size:17px;font-variant-numeric:tabular-nums}
+.hprog{position:absolute;left:max(20px,env(safe-area-inset-left,0px));right:max(20px,env(safe-area-inset-right,0px));bottom:28px;height:2px;background:var(--line)}
+.hprog i{display:block;height:100%;width:0;background:var(--acc)}
+.hint{position:absolute;right:max(20px,env(safe-area-inset-right,0px));bottom:42px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+@media(max-width:820px){
+  .hpanel{top:auto;bottom:76px;transform:none;left:max(20px,env(safe-area-inset-left,0px));right:auto;padding:14px}
+  .hnum{font-size:48px}.stats{display:none}.hcopy{bottom:auto;top:96px}.hcopy p{display:none}.hint{display:none}
+}
+
+/* band */
+.band{padding-block:72px;border-block:1px solid var(--line);background:var(--bg2)}
+.band .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px}
+.band b{font-family:var(--display);font-weight:300;font-size:clamp(30px,4vw,52px);display:block;font-variant-numeric:tabular-nums}
+.band span{font-size:12px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase}
+
+/* sections */
+section.pad{padding-block:110px}
+.shead{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.shead p{max-width:46ch;color:var(--mut);margin:12px 0 0}
+
+/* MASTERPLAN */
+.mp{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:18px;align-items:start}
+.legend{display:flex;flex-direction:column;gap:6px}
+.lg{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:transparent;text-align:left;transition:.2s}
+.lg i{width:14px;height:14px;border-radius:4px;flex:none}
+.lg span{flex:1;font-weight:600;font-size:13px}
+.lg em{font-style:normal;font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums}
+.lg.on{border-color:var(--acc);background:#1d1815}
+.mapbox{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#ebebe6;aspect-ratio:1360/1020}
+.mapbox img,.mapbox svg{position:absolute;inset:0;width:100%;height:100%}
+.mapbox circle{transition:.2s;cursor:pointer}
+.tip{position:absolute;pointer-events:none;background:#14110fee;color:var(--fg);padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;transform:translate(-50%,-140%);opacity:0;transition:opacity .15s;white-space:nowrap;z-index:3}
+.card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg2)}
+.card img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.card .in{padding:16px}
+.card h3{font-size:22px;margin:4px 0 8px}
+.card .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.empty{padding:30px 16px;color:var(--mut)}
+@media(max-width:1020px){.mp{grid-template-columns:1fr}.legend{flex-direction:row;flex-wrap:wrap}.lg{flex:1 1 140px}}
+
+/* 3D */
+#xp{height:100vh;min-height:560px;position:relative;background:#7f8fa3}
+#xp::before{content:'';position:absolute;inset:0 0 auto;height:260px;background:linear-gradient(#0d0b0acc,#0d0b0a00);z-index:1;pointer-events:none}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+#gl:active{cursor:grabbing}
+.xtop{position:absolute;left:max(20px,env(safe-area-inset-left,0px));top:84px;z-index:2;max-width:420px;text-shadow:0 1px 20px #0008}
+.xtop h2{font-size:clamp(24px,3.4vw,40px);margin-top:8px}
+.xpill{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:6px;align-items:center;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:99px;padding:6px;z-index:2;max-width:calc(100vw - 24px);overflow-x:auto}
+.xpill .chip{border-radius:99px;border-color:transparent;padding:7px 12px;white-space:nowrap}
+.xpill .sun{display:flex;align-items:center;gap:8px;padding:0 12px;font-size:11px;color:var(--mut);white-space:nowrap}
+.xpill input[type=range]{width:110px;accent-color:#d9b27c}
+.tag{position:absolute;z-index:2;transform:translate(-50%,-130%);background:#fff;color:#1b1714;border:0;border-radius:99px;padding:8px 14px;font-size:12px;font-weight:700;box-shadow:0 6px 24px #0006;display:none;white-space:nowrap}
+.tag:hover{background:var(--acc)}
+.xpanel{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:84px;width:min(330px,calc(100vw - 32px));z-index:3;background:#f6f2ec;color:#1b1714;border-radius:18px;padding:18px;box-shadow:0 20px 60px #0006;display:none;max-height:calc(100% - 170px);overflow:auto}
+.xpanel.on{display:block}
+.xpanel .x{position:absolute;right:12px;top:10px;background:none;border:0;font-size:20px;color:#1b1714}
+.xpanel h3{font-size:22px}
+.xpanel .tabs{display:flex;gap:6px;margin:12px 0}
+.xpanel .tabs button{border:0;background:#e4ddd3;border-radius:99px;padding:6px 12px;font-size:12px;font-weight:600;color:#1b1714}
+.xpanel .tabs button.on{background:#1b1714;color:#f6f2ec}
+.xpanel img{width:100%;border-radius:10px;background:#fff}
+.xpanel table{width:100%;font-size:12px;border-collapse:collapse}
+.xpanel td{color:#1b1714;padding:4px 0;border-bottom:1px solid #d9d1c6}
+.xpanel td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.xpanel .btn{width:100%;justify-content:center;margin-top:12px;border-color:#1b1714}
+.xpanel .btn.pri{background:#e4572e;border-color:#e4572e;color:#fff}
+.fallback{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:24px;background:var(--bg2);z-index:4;color:var(--mut)}
+
+#fade{position:absolute;inset:0;background:#0d0b0a;opacity:0;pointer-events:none;transition:opacity .45s;z-index:6}
+#xp.inside .xtop,#xp.inside .xpill,#xp.inside .tag,#xp.inside .xpanel{display:none!important}
+#xp.inside::before{display:none}
+#ihud{position:absolute;inset:0;z-index:4;pointer-events:none;display:none}
+#xp.inside #ihud{display:block}
+#ihud>*{pointer-events:auto}
+.ih-top{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:84px;display:flex;gap:14px;align-items:center}
+.ih-top .chip,.ih-lv .chip{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:99px;padding:8px 14px}
+.ih-top .chip.on,.ih-lv .chip.on{background:var(--fg);color:#14110f}
+.ih-title{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:12px;padding:8px 14px}
+.ih-title b{font-family:var(--display);font-weight:400;font-size:16px}
+.ih-lv{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:84px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
+.ih-card{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:24px;width:min(300px,calc(100vw - 32px));max-height:42%;overflow:auto;background:#f6f2ec;color:#1b1714;border-radius:16px;padding:14px 16px}
+.ih-card .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8a6a40;font-weight:700;margin-bottom:6px}
+.ih-card table{width:100%;font-size:12px;border-collapse:collapse}
+.ih-card td{color:#1b1714;padding:3px 0;border-bottom:1px solid #1b171422}.ih-card td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.ih-hint{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);font-size:11px;letter-spacing:.12em;color:#fff;text-shadow:0 1px 8px #000a;white-space:nowrap}
+.dpad{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:20px;display:grid;grid-template-columns:repeat(3,46px);grid-template-rows:repeat(2,46px);gap:6px}
+.dpad button{border-radius:12px;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;font-size:15px;touch-action:none}
+.dpad [data-k=w]{grid-column:2;grid-row:1}.dpad [data-k=a]{grid-column:1;grid-row:2}.dpad [data-k=s]{grid-column:2;grid-row:2}.dpad [data-k=d]{grid-column:3;grid-row:2}
+@media(max-width:700px){.ih-hint{display:none}.ih-card{bottom:120px;max-height:30%}.ih-top{flex-direction:column;align-items:flex-start;gap:8px}.ih-lv{top:150px}}
+/* INTERIOR */
+#interior{height:420vh}
+.ibg{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;will-change:transform}
+.ishade{position:absolute;inset:0;background:linear-gradient(0deg,#0d0b0a99,#0d0b0a00 45%),linear-gradient(180deg,#0d0b0a88,#0d0b0a00 25%)}
+.itypes{position:absolute;top:84px;left:50%;transform:translateX(-50%);display:flex;gap:6px;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:99px;padding:5px;z-index:2}
+.itypes .chip{border-radius:99px;border-color:transparent;padding:7px 14px}
+.icard{position:absolute;left:max(20px,env(safe-area-inset-left,0px));bottom:92px;width:min(380px,calc(100vw - 40px));background:#f6f2ece6;color:#1b1714;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:16px;padding:20px 22px;transition:opacity .45s,transform .45s}
+.icard.sw{opacity:0;transform:translateY(14px)}
+.icard .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8a6a40;font-weight:700}
+.icard h3{font-size:22px;margin:6px 0 10px;color:#1b1714}
+.icard table{width:100%;font-size:13px;border-collapse:collapse}
+.icard td{color:#1b1714;padding:4px 0;border-bottom:1px solid #1b171422}
+.icard td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.idots{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);display:flex;gap:10px;z-index:2}
+.idots i{width:7px;height:7px;border-radius:50%;background:#fff6;transition:.3s}
+.idots i.on{background:#fff;transform:scale(1.5)}
+.icnt{position:absolute;right:max(20px,env(safe-area-inset-right,0px));bottom:28px;font-family:var(--display);font-size:13px;letter-spacing:.1em}
+.itoast{position:absolute;right:max(20px,env(safe-area-inset-right,0px));top:84px;color:#fff;font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-shadow:0 1px 10px #0008}
+
+/* FLOORS */
+.fl{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:28px;align-items:start}
+.isobox{background:#f3f0ea;border-radius:18px;padding:18px;display:grid;place-items:center;min-height:360px}
+.isobox img{max-height:560px;width:auto;max-width:100%;mix-blend-mode:multiply}
+.lvtabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+table.rooms{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.rooms td{padding:9px 0;border-bottom:1px solid var(--line)}
+.rooms td:last-child{text-align:right;font-family:var(--display);font-size:13px}
+.rooms tr.tot td{border-bottom:0;color:var(--acc);font-weight:600}
+.sheet{margin-top:20px;border-radius:14px;overflow:hidden;border:1px solid var(--line);position:relative;cursor:zoom-in;background:#fff}
+.sheet img{width:100%}
+.sheet span{position:absolute;left:10px;bottom:10px;background:#14110fcc;padding:5px 10px;border-radius:99px;font-size:11px}
+@media(max-width:900px){.fl{grid-template-columns:1fr}}
+
+/* contact */
+.contact{background:var(--bg2);border-top:1px solid var(--line)}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+form{display:grid;gap:12px}
+label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);display:grid;gap:6px}
+input,select{background:var(--bg);border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:12px 14px;font:inherit}
+.note{font-size:12px;color:var(--mut)}
+@media(max-width:820px){.cgrid{grid-template-columns:1fr}}
+footer{padding:28px max(20px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);font-size:12px;color:var(--mut);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lb{position:fixed;inset:0;background:#000d;z-index:100;display:none;place-items:center;padding:20px;cursor:zoom-out}
+.lb.on{display:grid}
+.lb img{max-width:100%;max-height:100%;background:#fff;border-radius:8px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--fg);color:#14110f;padding:10px 18px;border-radius:99px;font-weight:600;font-size:13px;z-index:120;opacity:0;pointer-events:none;transition:.3s}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hbg img{transition:none}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="#top"><b>◆</b> УУРХАЙЧИН-3</a>
+  <div class="links"><a href="#hero">Загвар</a><a href="#plan">Генплан</a><a href="#xp">3D</a><a href="#interior">Дотор</a><a href="#floors">Давхар</a><a href="#contact">Холбоо</a></div>
+  <a class="btn pri" href="#contact">Үзлэгт бүртгүүлэх</a>
+</nav>
+
+<section id="hero" class="pin"><div class="stick" id="top">
+  <div class="hbg" id="hbg"></div><div class="hshade"></div>
+  <div class="hcopy">
+    <div class="eyebrow">Орхон аймаг · Баянөндөр сум</div>
+    <h1>Уулын хөвөөнд<br>таны гэр</h1>
+    <p>Уурхайчин-3 төслийн хаус хотхон. Сингл болон твин хаусын арван загвар, 184.75 – 296.97 м² талбайтай. Доош гүйлгэж загвар бүрийг үзнэ үү.</p>
+    <div class="row"><a class="btn pri" href="#plan">Генплан үзэх</a><a class="btn" href="#xp">3D-ээр нэвтрэх</a></div>
+  </div>
+  <aside class="hpanel" aria-live="polite">
+    <div class="lab">Сонгосон загвар</div>
+    <div class="hnum"><span id="hNum">1</span><small>ЗАГВАР</small></div>
+    <div class="hkind" id="hKind"></div>
+    <div class="chips" id="hChips"></div>
+    <div class="stats"><div><span>Талбай</span><b id="hArea"></b></div><div><span>Түвшин</span><b id="hLv"></b></div></div>
+    <button class="btn pri" id="hGo" style="width:100%;justify-content:center">Давхрын төлөвлөгөө үзэх</button>
+  </aside>
+  <div class="hint">Гүйлгэх ↓</div>
+  <div class="hprog"><i id="hProg"></i></div>
+</div></section>
+
+<div class="band"><div class="wrap">
+  <div><b>10</b><span>Загвар</span></div>
+  <div><b>184.75</b><span>Хамгийн жижиг, м²</span></div>
+  <div><b>296.97</b><span>Хамгийн том, м²</span></div>
+  <div><b>2–3</b><span>Давхар, зоорьтой / зоорьгүй</span></div>
+</div></div>
+
+<section class="pad" id="plan"><div class="wrap">
+  <div class="shead"><div><div class="eyebrow">Барилгуудын схем</div><h2>Генплан дээрээс<br>байшингаа сонгоно</h2></div><p>Өнгө бүр нэг загварыг заана. Цэг дээр дарж загварын мэдээллийг харна уу.</p></div>
+  <div class="mp">
+    <div class="legend" id="legend"></div>
+    <div class="mapbox" id="mapbox"><img src="img/map.jpg" alt="Уурхайчин-3 генплан"><svg id="mapsvg" viewBox="0 0 1360 1020"></svg><div class="tip" id="tip"></div></div>
+    <div class="card" id="mpcard"></div>
+  </div>
+</div></section>
+
+<section id="xp">
+  <canvas id="gl"></canvas>
+  <div class="xtop"><div class="eyebrow">3D хотхон</div><h2>Хотхоноор нисч,<br>байшин руу ор</h2></div>
+  <button class="tag" id="xtag">Дотогш орох →</button>
+  <div class="xpanel" id="xpanel"></div>
+  <div class="xpill" id="xpill"></div>
+  <div id="fade"></div><div id="ihud"></div>
+  <div class="fallback" id="xfb">Таны төхөөрөмж дээр 3D (WebGL) ажиллахгүй байна. Генпланаас загваруудыг үзнэ үү.</div>
+</section>
+
+<section id="interior" class="pin"><div class="stick" id="istick">
+  <img class="ibg" id="ibg" alt="Загварын гадна төрх"><div class="ishade"></div>
+  <div class="itypes" id="itypes"></div>
+  <div class="itoast" id="itoast"></div>
+  <div class="icard" id="icard"></div>
+  <div class="idots" id="idots"></div>
+  <div class="icnt" id="icnt"></div>
+</div></section>
+
+<section class="pad" id="floors"><div class="wrap">
+  <div class="shead"><div><div class="eyebrow">Давхрын байгууламж</div><h2>Давхар бүрийн<br>өрөө, талбай</h2></div><div class="chips" id="fChips"></div></div>
+  <div class="fl">
+    <div><div class="isobox"><img id="isoimg" alt="Харагдах байдал"></div><p class="note" style="margin-top:10px">Харагдах байдал (изометр). Зургийг төлөвлөгөөний хуудаснаас авсан.</p></div>
+    <div><div class="lvtabs" id="lvtabs"></div><table class="rooms" id="rooms"></table>
+      <div class="sheet" id="sheet"><img id="sheetimg" alt="Төлөвлөгөөний хуудас"><span>Томруулж харах</span></div></div>
+  </div>
+</div></section>
+
+<section class="pad contact" id="contact"><div class="wrap cgrid">
+  <div><div class="eyebrow">Үзлэг</div><h2>Загвараа сонгоод<br>бидэнтэй уулзаарай</h2><p class="mut" style="max-width:40ch;margin-top:16px">Нэр, утсаа үлдээвэл сонгосон загварын мэдээллийг тайлбарлан хүргэнэ.</p></div>
+  <form id="form">
+    <label for="fn">Нэр<input id="fn" required autocomplete="name"></label>
+    <label for="fp">Утас<input id="fp" required inputmode="tel" autocomplete="tel"></label>
+    <label for="ft">Загвар<select id="ft"></select></label>
+    <button class="btn pri" style="justify-content:center">Бүртгүүлэх</button>
+    <div class="note">Энэ бол демо хуудас: форм серверт холбогдоогүй, мэдээлэл хаана ч илгээгдэхгүй.</div>
+  </form>
+</div></section>
+<footer><span>Орхон аймаг, Баянөндөр сум · Уурхайчин-3 төсөл</span><span>Зураг, талбайн мэдээлэл: төслийн танилцуулга</span></footer>
+<div class="lb" id="lb"><img id="lbimg" alt=""></div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=n=>n.toFixed(2);
+const R=(a,b)=>[a,b];
+const TYPES=[
+ {id:'1',kind:'Синглхаус',area:296.97,color:'#e0595a',img:'t1',levels:[
+  ['Зоорийн давхар',[['Дулаан зогсоол',44.40],['Үүдний өрөө',24.68],['Техникийн өрөө',5.92],['Шатны хонгил',5.05],['Дулааны узелийн өрөө',8.75]]],
+  ['1-р давхар',[['Зочны өрөө, гал тогоо',50.41],['Олон зориулалтын өрөө',26.08],['Коридор',4.52],['АЦ',5.50],['Шатны хонгил',13.80],['Террас',13.17]]],
+  ['2-р давхар',[['Унтлагын өрөө',25.09],['Унтлагын өрөө',14.52],['Мастер унтлагын өрөө',29.46],['Мастер АЦ',8.56],['Тагт',12.00],['АЦ',5.89],['Коридор',2.99],['Шатны хонгил',13.80]]]]},
+ {id:'2A',kind:'Твин хаус',area:199.20,color:'#e8de6e',img:'t2a',levels:[
+  ['Зоорийн давхар',[['Дулааны узелийн өрөө',5.00],['Техникийн өрөө',8.75],['Цахилгаан техникийн өрөө',10.00],['Террас',43.97]]],
+  ['1-р давхар',[['Гонх',3.94],['Дулаан зогсоол',21.00],['Коридор',3.39],['Гал тогоо',8.31],['Зочны өрөө',28.56],['АЦ',5.43],['Агуулах өрөө',3.30],['Шатны хонгил',6.05]]],
+  ['2-р давхар',[['Шатны хонгил',9.35],['Коридор',12.03],['Унтлагын өрөө',16.46],['Унтлагын өрөө',16.28],['Унтлагын өрөө',18.85],['АЦ',7.00],['Тагт',7.70]]]]},
+ {id:'2B',kind:'Хаус',area:247.42,color:'#eab26a'},
+ {id:'3A',kind:'Синглхаус',area:205.76,color:'#c19a5f',img:'t3a',levels:[
+  ['Зоорийн давхар',[['Дулаан зогсоол',32.00],['Техникийн өрөө',15.40],['Дулааны узелийн өрөө',7.69],['Цахилгаан техникийн өрөө',6.45],['Шатны хонгил',2.50]]],
+  ['1-р давхар',[['Гонх',2.29],['Зочны өрөө, гал тогоо',40.87],['Ажлын өрөө',10.57],['АЦ',5.07],['Шатны хонгил',9.77],['Террас',12.61]]],
+  ['2-р давхар',[['Унтлагын өрөө',15.09],['Унтлагын өрөө',18.27],['Унтлагын өрөө',11.80],['Коридор',8.25],['АЦ',5.29],['Шатны хонгил',9.77],['Тагт',3.44]]]]},
+ {id:'3B',kind:'Синглхаус',area:216.79,color:'#6f8fd6',img:'t3b',levels:[
+  ['Зоорийн давхар',[['Дулаан зогсоол',35.20],['Олон зориулалтын өрөө',16.46],['Техникийн өрөө',8.62],['Цахилгаан техникийн өрөө',6.67],['Шатны хонгил',3.45]]],
+  ['1-р давхар',[['Үүдний өрөө',2.76],['Зочны өрөө, гал тогоо',35.20],['Олон зориулалтын өрөө',10.22],['АЦ',5.50],['Коридор',6.73],['Шатны хонгил',10.12],['Террас',13.70]]],
+  ['2-р давхар',[['Унтлагын өрөө',15.62],['Унтлагын өрөө',17.60],['Унтлагын өрөө',12.00],['Коридор',9.55],['АЦ',5.50],['Шатны хонгил',10.12],['Тагт',4.53]]]]},
+ {id:'4A',kind:'Синглхаус',area:184.75,color:'#e69bd0',img:'t4a',levels:[
+  ['1-р давхар',[['Гонх',2.42],['Зочны өрөө, гал тогоо',45.21],['Дулаан зогсоол',23.53],['АЦ',4.07],['Техникийн өрөө',7.64],['Шатны хонгил',5.64],['Террас',22.21]]],
+  ['2-р давхар',[['Унтлагын өрөө',17.56],['Унтлагын өрөө',16.87],['Унтлагын өрөө',17.59],['Коридор',10.85],['Ажлын өрөө',10.85],['АЦ',5.96],['Шатны хонгил',8.83],['Тагт',3.55]]]]},
+ {id:'4B',kind:'Хаус',area:281.36,color:'#8fd24a'},
+ {id:'5A',kind:'Хаус',area:212.73,color:'#a9b3e6'},
+ {id:'5B',kind:'Хаус',area:266.09,color:'#86d6ae'},
+ {id:'6',kind:'Таунхаус блок',area:null,color:'#4fb3bf'}
+];
+const BY=Object.fromEntries(TYPES.map(t=>[t.id,t]));
+const FULL=TYPES.filter(t=>t.img);
+const HERO=['1','2A','3A','3B','4A'];
+let sel='1';
+const lbl=t=>t.id+' загвар';
+const areaTxt=t=>t.area?fmt(t.area)+' м²':'—';
+function toast(m){const e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2200)}
+function lightbox(src){$('#lbimg').src=src;$('#lb').classList.add('on')}
+$('#lb').onclick=()=>$('#lb').classList.remove('on');
+function goto(id){$(id).scrollIntoView({behavior:'smooth'})}
+
+/* ---------- HERO ---------- */
+const hbg=$('#hbg');
+HERO.forEach((id,i)=>{const im=new Image();im.src='img/'+BY[id].img+'_render.jpg';im.alt=lbl(BY[id])+' - гадна төрх';if(!i)im.className='on';hbg.appendChild(im)});
+$('#hChips').innerHTML=HERO.map(id=>`<button class="chip" data-id="${id}">${id}</button>`).join('');
+let heroIdx=-1;
+function setHero(i){
+  if(i===heroIdx)return;heroIdx=i;const t=BY[HERO[i]];
+  $$('#hbg img').forEach((im,k)=>im.classList.toggle('on',k===i));
+  $('#hNum').textContent=t.id;$('#hKind').textContent=t.kind;$('#hArea').textContent=areaTxt(t);$('#hLv').textContent=t.levels.length+' давхар/зоорь';
+  $$('#hChips .chip').forEach(c=>c.classList.toggle('on',c.dataset.id===t.id));
+}
+$('#hChips').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;const i=HERO.indexOf(c.dataset.id);const h=$('#hero');const span=h.offsetHeight-innerHeight;window.scrollTo({top:h.offsetTop+span*(i+.5)/HERO.length,behavior:'smooth'})};
+$('#hGo').onclick=()=>{selectType(HERO[heroIdx]);goto('#floors')};
+
+/* ---------- MASTERPLAN ---------- */
+const HOUSES=[{"t":"1","x":0.3176,"y":0.0432},{"t":"1","x":0.3494,"y":0.0548},{"t":"1","x":0.381,"y":0.0665},{"t":"1","x":0.4125,"y":0.0784},{"t":"1","x":0.4443,"y":0.0907},{"t":"1","x":0.4758,"y":0.1037},{"t":"1","x":0.5075,"y":0.1172},{"t":"1","x":0.539,"y":0.1297},{"t":"1","x":0.3082,"y":0.1343},{"t":"1","x":0.3398,"y":0.1403},{"t":"1","x":0.5707,"y":0.1424},{"t":"1","x":0.2652,"y":0.1421},{"t":"1","x":0.3714,"y":0.1523},{"t":"1","x":0.6022,"y":0.1543},{"t":"1","x":0.2348,"y":0.1554},{"t":"1","x":0.4029,"y":0.1643},{"t":"1","x":0.6339,"y":0.1667},{"t":"1","x":0.2041,"y":0.1682},{"t":"1","x":0.4346,"y":0.1762},{"t":"1","x":0.6656,"y":0.1775},{"t":"1","x":0.1736,"y":0.181},{"t":"1","x":0.4661,"y":0.1888},{"t":"1","x":0.6974,"y":0.1905},{"t":"1","x":0.4979,"y":0.2014},{"t":"1","x":0.729,"y":0.2024},{"t":"1","x":0.7608,"y":0.2139},{"t":"1","x":0.3153,"y":0.2186},{"t":"1","x":0.7922,"y":0.2261},{"t":"1","x":0.5645,"y":0.2278},{"t":"1","x":0.3465,"y":0.2307},{"t":"1","x":0.2676,"y":0.2309},{"t":"1","x":0.824,"y":0.2381},{"t":"1","x":0.5958,"y":0.24},{"t":"1","x":0.3785,"y":0.2425},{"t":"1","x":0.2366,"y":0.2446},{"t":"1","x":0.8557,"y":0.2504},{"t":"1","x":0.6276,"y":0.2524},{"t":"1","x":0.4098,"y":0.2543},{"t":"1","x":0.2064,"y":0.2572},{"t":"1","x":0.6593,"y":0.2639},{"t":"1","x":0.8871,"y":0.2629},{"t":"1","x":0.4417,"y":0.2663},{"t":"1","x":0.1756,"y":0.27},{"t":"1","x":0.919,"y":0.2761},{"t":"1","x":0.4726,"y":0.2791},{"t":"1","x":0.7046,"y":0.2786},{"t":"1","x":0.7363,"y":0.2902},{"t":"1","x":0.7675,"y":0.302},{"t":"1","x":0.7995,"y":0.3136},{"t":"1","x":0.831,"y":0.3257},{"t":"1","x":0.8625,"y":0.3377},{"t":"1","x":0.8943,"y":0.3508},{"t":"2B","x":0.275,"y":0.0831},{"t":"2B","x":0.242,"y":0.0937},{"t":"2B","x":0.2774,"y":0.0989},{"t":"2B","x":0.2107,"y":0.1062},{"t":"2B","x":0.2455,"y":0.1095},{"t":"2B","x":0.1807,"y":0.1192},{"t":"2B","x":0.2143,"y":0.1227},{"t":"2B","x":0.1843,"y":0.1352},{"t":"2B","x":0.4745,"y":0.1442},{"t":"2B","x":0.5045,"y":0.1627},{"t":"2B","x":0.4715,"y":0.16},{"t":"2B","x":0.5375,"y":0.1703},{"t":"2B","x":0.3213,"y":0.1815},{"t":"2B","x":0.2826,"y":0.1779},{"t":"2B","x":0.5345,"y":0.185},{"t":"2B","x":0.3545,"y":0.1874},{"t":"2B","x":0.2521,"y":0.1913},{"t":"2B","x":0.2856,"y":0.1935},{"t":"2B","x":0.3857,"y":0.1995},{"t":"2B","x":0.3512,"y":0.2034},{"t":"2B","x":0.2208,"y":0.2054},{"t":"2B","x":0.2549,"y":0.207},{"t":"2B","x":0.4171,"y":0.2116},{"t":"2B","x":0.1914,"y":0.2223},{"t":"2B","x":0.383,"y":0.2151},{"t":"2B","x":0.6674,"y":0.2189},{"t":"2B","x":0.2234,"y":0.2203},{"t":"2B","x":0.4489,"y":0.2244},{"t":"2B","x":0.4149,"y":0.2269},{"t":"2B","x":0.4805,"y":0.2366},{"t":"2B","x":0.7118,"y":0.2377},{"t":"2B","x":0.6649,"y":0.2348},{"t":"2B","x":0.4465,"y":0.2398},{"t":"2B","x":0.4776,"y":0.2524},{"t":"2B","x":0.87,"y":0.2989},{"t":"2B","x":0.1854,"y":0.3088},{"t":"2B","x":0.1552,"y":0.3217},{"t":"2B","x":0.1865,"y":0.3237},{"t":"2B","x":0.1581,"y":0.3375},{"t":"2B","x":0.2921,"y":0.3495},{"t":"2B","x":0.3358,"y":0.3519},{"t":"2B","x":0.5016,"y":0.3601},{"t":"2B","x":0.2916,"y":0.3628},{"t":"2B","x":0.3298,"y":0.3661},{"t":"2B","x":0.5246,"y":0.3689},{"t":"2B","x":0.2382,"y":0.3759},{"t":"2B","x":0.5033,"y":0.3786},{"t":"2B","x":0.5475,"y":0.3776},{"t":"2B","x":0.2069,"y":0.3894},{"t":"2B","x":0.5698,"y":0.3865},{"t":"2B","x":0.5253,"y":0.3879},{"t":"2B","x":0.2391,"y":0.39},{"t":"2B","x":0.5924,"y":0.394},{"t":"2B","x":0.548,"y":0.396},{"t":"2B","x":0.1773,"y":0.4012},{"t":"2B","x":0.2179,"y":0.4014},{"t":"2B","x":0.6151,"y":0.402},{"t":"2B","x":0.571,"y":0.4045},{"t":"2B","x":0.5939,"y":0.4121},{"t":"2B","x":0.175,"y":0.4191},{"t":"2B","x":0.6519,"y":0.4149},{"t":"2B","x":0.6163,"y":0.4202},{"t":"2B","x":0.6735,"y":0.4224},{"t":"2B","x":0.6964,"y":0.4297},{"t":"2B","x":0.6523,"y":0.4332},{"t":"2B","x":0.7193,"y":0.4383},{"t":"2B","x":0.6754,"y":0.4407},{"t":"2B","x":0.7418,"y":0.4467},{"t":"2B","x":0.6973,"y":0.4493},{"t":"2B","x":0.7642,"y":0.4556},{"t":"2B","x":0.7202,"y":0.4575},{"t":"2B","x":0.7431,"y":0.4654},{"t":"2B","x":0.7868,"y":0.4639},{"t":"2B","x":0.7651,"y":0.4743},{"t":"2B","x":0.788,"y":0.4828},{"t":"2B","x":0.6267,"y":0.4883},{"t":"2B","x":0.6493,"y":0.4969},{"t":"2B","x":0.6713,"y":0.505},{"t":"2B","x":0.6281,"y":0.5075},{"t":"2B","x":0.6945,"y":0.5139},{"t":"2B","x":0.6506,"y":0.5153},{"t":"2B","x":0.7173,"y":0.5228},{"t":"2B","x":0.6729,"y":0.5244},{"t":"2B","x":0.6954,"y":0.5326},{"t":"2B","x":0.7181,"y":0.5417},{"t":"3A","x":0.2749,"y":0.0913},{"t":"3A","x":0.2396,"y":0.09},{"t":"3A","x":0.2412,"y":0.1019},{"t":"3A","x":0.2788,"y":0.1029},{"t":"3A","x":0.2095,"y":0.1022},{"t":"3A","x":0.2121,"y":0.1173},{"t":"3A","x":0.2455,"y":0.1128},{"t":"3A","x":0.1788,"y":0.1149},{"t":"3A","x":0.181,"y":0.1306},{"t":"3A","x":0.474,"y":0.1556},{"t":"3A","x":0.5056,"y":0.1687},{"t":"3A","x":0.5391,"y":0.1788},{"t":"3A","x":0.3238,"y":0.1846},{"t":"3A","x":0.2813,"y":0.1867},{"t":"3A","x":0.5347,"y":0.1898},{"t":"3A","x":0.355,"y":0.1962},{"t":"3A","x":0.2515,"y":0.1996},{"t":"3A","x":0.3221,"y":0.1955},{"t":"3A","x":0.2872,"y":0.1965},{"t":"3A","x":0.3871,"y":0.2076},{"t":"3A","x":0.3502,"y":0.2057},{"t":"3A","x":0.2207,"y":0.2133},{"t":"3A","x":0.2545,"y":0.21},{"t":"3A","x":0.359,"y":0.2112},{"t":"3A","x":0.4187,"y":0.2201},{"t":"3A","x":0.3812,"y":0.2175},{"t":"3A","x":0.6691,"y":0.2273},{"t":"3A","x":0.1907,"y":0.2285},{"t":"3A","x":0.2233,"y":0.2234},{"t":"3A","x":0.3906,"y":0.2228},{"t":"3A","x":0.4503,"y":0.2327},{"t":"3A","x":0.4126,"y":0.2296},{"t":"3A","x":0.4221,"y":0.2352},{"t":"3A","x":0.6627,"y":0.2374},{"t":"3A","x":0.4821,"y":0.2452},{"t":"3A","x":0.7118,"y":0.2489},{"t":"3A","x":0.4467,"y":0.2435},{"t":"3A","x":0.4763,"y":0.2548},{"t":"3A","x":0.8701,"y":0.3098},{"t":"3A","x":0.1844,"y":0.3174},{"t":"3A","x":0.1545,"y":0.3302},{"t":"3A","x":0.188,"y":0.328},{"t":"3A","x":0.1589,"y":0.3407},{"t":"3A","x":0.2937,"y":0.3594},{"t":"3A","x":0.3374,"y":0.3604},{"t":"3A","x":0.5014,"y":0.3683},{"t":"3A","x":0.5237,"y":0.377},{"t":"3A","x":0.5464,"y":0.3856},{"t":"3A","x":0.2365,"y":0.3869},{"t":"3A","x":0.2488,"y":0.3789},{"t":"3A","x":0.5691,"y":0.3936},{"t":"3A","x":0.2086,"y":0.3954},{"t":"3A","x":0.5915,"y":0.4014},{"t":"3A","x":0.6137,"y":0.4092},{"t":"3A","x":0.2179,"y":0.4053},{"t":"3A","x":0.1754,"y":0.4105},{"t":"3A","x":0.6499,"y":0.4219},{"t":"3A","x":0.6732,"y":0.4293},{"t":"3A","x":0.1752,"y":0.4248},{"t":"3A","x":0.6958,"y":0.4383},{"t":"3A","x":0.7179,"y":0.4459},{"t":"3A","x":0.7406,"y":0.4546},{"t":"3A","x":0.7632,"y":0.4633},{"t":"3A","x":0.7855,"y":0.4713},{"t":"3A","x":0.6257,"y":0.4963},{"t":"3A","x":0.6482,"y":0.505},{"t":"3A","x":0.6709,"y":0.5131},{"t":"3A","x":0.6934,"y":0.5223},{"t":"3A","x":0.716,"y":0.5304},{"t":"2A","x":0.3151,"y":0.0926},{"t":"2A","x":0.3466,"y":0.1037},{"t":"2A","x":0.3786,"y":0.1162},{"t":"2A","x":0.4102,"y":0.1286},{"t":"2A","x":0.4416,"y":0.1412},{"t":"2A","x":0.6028,"y":0.2047},{"t":"2A","x":0.6348,"y":0.2162},{"t":"2A","x":0.7436,"y":0.2561},{"t":"2A","x":0.775,"y":0.2679},{"t":"2A","x":0.8069,"y":0.2799},{"t":"2A","x":0.8386,"y":0.293},{"t":"4B","x":0.5336,"y":0.2614},{"t":"4B","x":0.3206,"y":0.2669},{"t":"4B","x":0.5564,"y":0.2697},{"t":"4B","x":0.2779,"y":0.274},{"t":"4B","x":0.3434,"y":0.2738},{"t":"4B","x":0.5792,"y":0.2781},{"t":"4B","x":0.2559,"y":0.2831},{"t":"4B","x":0.3658,"y":0.2824},{"t":"4B","x":0.6019,"y":0.2862},{"t":"4B","x":0.3883,"y":0.2909},{"t":"4B","x":0.2338,"y":0.2923},{"t":"4B","x":0.6241,"y":0.2957},{"t":"4B","x":0.4107,"y":0.3001},{"t":"4B","x":0.2123,"y":0.3025},{"t":"4B","x":0.6469,"y":0.3032},{"t":"4B","x":0.4334,"y":0.3086},{"t":"4B","x":0.456,"y":0.3173},{"t":"4B","x":0.6829,"y":0.3157},{"t":"4B","x":0.7055,"y":0.3228},{"t":"4B","x":0.728,"y":0.3313},{"t":"4B","x":0.7506,"y":0.3401},{"t":"4B","x":0.7732,"y":0.3489},{"t":"4B","x":0.7956,"y":0.3581},{"t":"4B","x":0.3637,"y":0.3665},{"t":"4B","x":0.8186,"y":0.3662},{"t":"4B","x":0.2644,"y":0.3681},{"t":"4B","x":0.3863,"y":0.3749},{"t":"4B","x":0.8413,"y":0.3748},{"t":"4B","x":0.4091,"y":0.3818},{"t":"4B","x":0.8636,"y":0.383},{"t":"4B","x":0.4312,"y":0.3915},{"t":"4B","x":0.8862,"y":0.3927},{"t":"4B","x":0.4849,"y":0.4114},{"t":"4B","x":0.5077,"y":0.4194},{"t":"4B","x":0.5302,"y":0.4274},{"t":"4B","x":0.5526,"y":0.4368},{"t":"4B","x":0.5751,"y":0.4454},{"t":"4B","x":0.5975,"y":0.4529},{"t":"6","x":0.3683,"y":0.4684,"r":[68,134,-75]},{"t":"6","x":0.2351,"y":0.4846,"r":[197,68,-18]},{"t":"6","x":0.3551,"y":0.5487,"r":[65,101,-76]},{"t":"6","x":0.2332,"y":0.5711,"r":[196,66,-18]},{"t":"6","x":0.3417,"y":0.6253,"r":[67,68,-72]},{"t":"6","x":0.2512,"y":0.6496,"r":[134,65,-18]},{"t":"6","x":0.4646,"y":0.6694,"r":[68,197,-75]},{"t":"6","x":0.4266,"y":0.7388,"r":[68,134,-76]},{"t":"3B","x":0.5257,"y":0.2914},{"t":"3B","x":0.5483,"y":0.2994},{"t":"3B","x":0.2906,"y":0.3051},{"t":"3B","x":0.3348,"y":0.3047},{"t":"3B","x":0.5708,"y":0.3101},{"t":"3B","x":0.2681,"y":0.3133},{"t":"3B","x":0.3571,"y":0.3126},{"t":"3B","x":0.594,"y":0.3178},{"t":"3B","x":0.2469,"y":0.3237},{"t":"3B","x":0.6167,"y":0.3262},{"t":"3B","x":0.3796,"y":0.3235},{"t":"3B","x":0.4016,"y":0.3313},{"t":"3B","x":0.2248,"y":0.3337},{"t":"3B","x":0.6384,"y":0.3342},{"t":"3B","x":0.4238,"y":0.3363},{"t":"3B","x":0.203,"y":0.3422},{"t":"3B","x":0.6746,"y":0.3463},{"t":"3B","x":0.1807,"y":0.3506},{"t":"3B","x":0.4476,"y":0.3497},{"t":"3B","x":0.6974,"y":0.3518},{"t":"3B","x":0.7208,"y":0.3629},{"t":"3B","x":0.7431,"y":0.3717},{"t":"3B","x":0.7647,"y":0.3794},{"t":"3B","x":0.2992,"y":0.3888},{"t":"3B","x":0.7875,"y":0.3879},{"t":"3B","x":0.3328,"y":0.3898},{"t":"3B","x":0.81,"y":0.3966},{"t":"3B","x":0.3554,"y":0.3985},{"t":"3B","x":0.2775,"y":0.3976},{"t":"3B","x":0.3785,"y":0.4062},{"t":"3B","x":0.2562,"y":0.4067},{"t":"3B","x":0.8329,"y":0.4058},{"t":"3B","x":0.4008,"y":0.4129},{"t":"3B","x":0.8557,"y":0.4137},{"t":"3B","x":0.2338,"y":0.4164},{"t":"3B","x":0.4232,"y":0.4223},{"t":"3B","x":0.2121,"y":0.4249},{"t":"3B","x":0.1905,"y":0.4349},{"t":"3B","x":0.4768,"y":0.4436},{"t":"3B","x":0.168,"y":0.444},{"t":"3B","x":0.4993,"y":0.4513},{"t":"3B","x":0.5215,"y":0.4603},{"t":"3B","x":0.5441,"y":0.4683},{"t":"3B","x":0.5669,"y":0.4767},{"t":"3B","x":0.5895,"y":0.4834},{"t":"3B","x":0.4546,"y":0.4876},{"t":"5A","x":0.5733,"y":0.3072},{"t":"5A","x":0.2217,"y":0.3269},{"t":"5A","x":0.4488,"y":0.3399},{"t":"5A","x":0.6505,"y":0.5667},{"t":"5B","x":0.4827,"y":0.5296,"r":[27,119,-75]},{"t":"5B","x":0.5747,"y":0.5629,"r":[27,120,-74]},{"t":"5B","x":0.4578,"y":0.604,"r":[27,120,-74]},{"t":"5B","x":0.5499,"y":0.6372,"r":[27,120,-75]},{"t":"4A","x":0.5085,"y":0.3359},{"t":"4A","x":0.5312,"y":0.3452},{"t":"4A","x":0.5535,"y":0.3545},{"t":"4A","x":0.5762,"y":0.3629},{"t":"4A","x":0.5988,"y":0.3702},{"t":"4A","x":0.6213,"y":0.3787},{"t":"4A","x":0.6572,"y":0.3909},{"t":"4A","x":0.6805,"y":0.398},{"t":"4A","x":0.7024,"y":0.4067},{"t":"4A","x":0.7257,"y":0.4155},{"t":"4A","x":0.7478,"y":0.4243},{"t":"4A","x":0.77,"y":0.4331},{"t":"4A","x":0.7928,"y":0.4414},{"t":"4A","x":0.8157,"y":0.4525},{"t":"4A","x":0.6328,"y":0.4646},{"t":"4A","x":0.6555,"y":0.4737},{"t":"4A","x":0.6784,"y":0.4818},{"t":"4A","x":0.7004,"y":0.4908},{"t":"4A","x":0.7236,"y":0.4993},{"t":"4A","x":0.7456,"y":0.5089}];
+const counts={};HOUSES.forEach(h=>counts[h.t]=(counts[h.t]||0)+1);
+const lg=$('#legend');
+lg.innerHTML=TYPES.map(t=>`<button class="lg" data-id="${t.id}"><i style="background:${t.color}"></i><span>${t.id} загвар</span><em>${t.area?fmt(t.area)+' м²':'блок'}</em></button>`).join('');
+const svg=$('#mapsvg'),tip=$('#tip');
+svg.innerHTML=HOUSES.filter(h=>h.t!=='6').map((h,i)=>`<circle data-t="${h.t}" cx="${(h.x*1360).toFixed(1)}" cy="${(h.y*1020).toFixed(1)}" r="9" fill="${BY[h.t].color}" stroke="#14110f" stroke-opacity=".55" stroke-width="2" fill-opacity=".0" />`).join('')
+ + HOUSES.filter(h=>h.t==='6').map(h=>`<circle data-t="6" cx="${(h.x*1360).toFixed(1)}" cy="${(h.y*1020).toFixed(1)}" r="16" fill="${BY['6'].color}" stroke="#14110f" stroke-opacity=".55" stroke-width="2" fill-opacity="0"/>`).join('');
+function paintMap(){
+  $$('#mapsvg circle').forEach(c=>{const on=c.dataset.t===sel;c.setAttribute('fill-opacity',on?.9:0);c.setAttribute('stroke-opacity',on?.9:0);c.setAttribute('r',c.dataset.t==='6'?16:(on?11:9))});
+}
+svg.addEventListener('pointermove',e=>{const c=e.target.closest('circle');if(!c){tip.style.opacity=0;return}
+  const b=$('#mapbox').getBoundingClientRect();tip.style.left=(e.clientX-b.left)+'px';tip.style.top=(e.clientY-b.top)+'px';
+  const t=BY[c.dataset.t];tip.textContent=lbl(t)+' · '+areaTxt(t);tip.style.opacity=1});
+svg.addEventListener('pointerleave',()=>tip.style.opacity=0);
+svg.addEventListener('click',e=>{const c=e.target.closest('circle');if(c)selectType(c.dataset.t)});
+lg.onclick=e=>{const b=e.target.closest('.lg');if(b)selectType(b.dataset.id)};
+function mpCard(){
+  const t=BY[sel];const has=!!t.img;
+  $('#mpcard').innerHTML=(has?`<img src="img/${t.img}_render.jpg" alt="${lbl(t)}">`:'')+`<div class="in"><div class="eyebrow">${t.kind}</div><h3>${lbl(t)}</h3><div class="mut">Нийт талбай: <b style="color:var(--fg)">${areaTxt(t)}</b> · Генплан дээр ${counts[t.id]||0} цэг тодорлоо</div>`+
+   (has?`<div class="acts"><button class="btn pri" id="c1">Дотор нь үзэх</button><button class="btn" id="c2">Давхрын төлөвлөгөө</button></div>`:`<p class="mut" style="margin:12px 0 0">Энэ загварын зураг, төлөвлөгөө танилцуулгын энэ хэсэгт ороогүй байна.</p>`)+`</div>`;
+  if(has){$('#c1').onclick=()=>goto('#interior');$('#c2').onclick=()=>goto('#floors')}
+}
+
+/* ---------- SELECT ---------- */
+function selectType(id){
+  sel=id;$$('.lg').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+  paintMap();mpCard();xpSync&&xpSync();
+  if(BY[id].img){buildInterior(true);buildFloors()}
+  $('#ft').value=id;
+}
+
+
+const FURN={
+'t1-0':[['car',123,47,35,81],['car',170,47,35,81],['tank',52,8,20,14],['stair',10,28,92,22,'e'],['wc',5,55,10,12],['sink',52,56,12,12],['bed',8,100,52,40,'w']],
+'t1-1':[['stair',8,25,70,24,'e'],['wc',120,10,10,12],['sink',138,10,16,8],['sofa',149,95,17,48,'e'],['table',128,110,17,20],['table',186,102,14,38],['counter',157,8,63,12],['island',179,38,38,16],['desk',14,88,18,18],['sofa',89,107,15,22,'e']],
+'t1-2':[['stair',8,12,66,18,'e'],['bed',28,52,34,45,'n'],['bed',138,80,42,45,'e'],['bed',25,115,45,40,'n'],['wardrobe',118,70,9,55],['wc',112,8,10,10],['tub',118,28,18,14],['wc',160,10,10,10],['sink',178,10,18,8]],
+'t2a-0':[['table',60,100,22,14]],
+'t2a-1':[['car',22,28,38,75],['table',70,103,20,35],['sofa',118,102,18,52,'w'],['table',143,115,14,10],['counter',15,122,48,9],['wc',105,45,10,10],['sink',110,20,10,8],['stair',128,20,18,60,'s']],
+'t2a-2':[['bed',8,24,48,42,'n'],['bed',20,115,42,42,'n'],['desk',8,93,14,20],['bed',117,128,40,28,'e'],['wc',106,38,10,10],['sink',108,60,12,8],['stair',148,20,22,60,'s']],
+'t3a-0':[['car',27,70,40,95],['tank',150,110,18,18],['stair',95,10,78,24,'e']],
+'t3a-1':[['counter',14,8,80,11],['island',9,50,45,12],['table',14,80,37,15],['sofa',69,110,18,60,'e'],['table',38,133,19,20],['stair',100,8,78,35,'e'],['wc',130,68,9,10],['tub',157,62,18,32],['desk',147,138,28,14]],
+'t3a-2':[['bed',6,10,45,42,'n'],['bed',8,115,48,50,'w'],['wardrobe',5,80,50,14],['bed',123,135,47,35,'e'],['wardrobe',115,105,55,10],['wc',118,68,9,10],['sink',122,85,12,8],['tub',155,62,14,26],['stair',95,10,72,45,'e']],
+'t4a-0':[['counter',22,53,75,13],['counter',82,77,16,30],['island',21,85,36,18],['table',28,147,40,21],['sofa',82,190,18,63,'e'],['table',48,208,19,26],['car',158,25,38,100],['wc',168,185,10,12],['sink',140,193,10,8],['stair',142,215,78,42,'e'],['wardrobe',102,55,12,50]],
+'t4a-1':[['bed',12,58,50,32,'n'],['desk',11,98,20,15],['wardrobe',11,127,46,22],['wardrobe',14,162,83,11],['bed',34,203,57,44,'e'],['bed',141,30,56,60,'n'],['wardrobe',157,147,53,13],['desk',161,100,33,15],['wc',175,190,9,10],['tub',180,168,30,28],['stair',129,217,70,40,'w']]
+};
+[0,1,2].forEach(i=>FURN['t3b-'+i]=FURN['t3a-'+i]);
+
+/* ---------- 3D ---------- */
+let xpSync=null;
+function initXP(){
+  const cv=$('#gl');let renderer;let mode='city';
+  try{renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:false});}catch(e){$('#xfb').style.display='grid';return}
+  const box=$('#xp');
+  const fb=(m)=>{const f=$('#xfb');f.style.display='grid';f.textContent=m};
+  cv.addEventListener('webglcontextlost',e=>{e.preventDefault();fb('3D дэлгэц түр тасарлаа (төхөөрөмжийн санах ой дүүрсэн байж магадгүй). Хуудсыг дахин ачаална уу.')});
+  cv.addEventListener('webglcontextrestored',()=>{$('#xfb').style.display='none'});
+  renderer.outputEncoding=THREE.sRGBEncoding;renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<800?1.2:1.75));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(42,1,.5,1600);
+  const hemi=new THREE.HemisphereLight(0xcfe3ff,0x8a7c68,.55);scene.add(hemi);
+  const sun=new THREE.DirectionalLight(0xfff0d8,1.0);sun.castShadow=true;sun.shadow.mapSize.set(innerWidth<800?1024:2048,innerWidth<800?1024:2048);
+  const sc=sun.shadow.camera;sc.left=-85;sc.right=85;sc.top=70;sc.bottom=-70;sc.near=1;sc.far=400;sun.shadow.bias=-.0006;scene.add(sun);scene.add(sun.target);
+  const W=136,D=102,S=W/1360;
+  const tex=new THREE.TextureLoader().load('img/map.png');tex.anisotropy=8;tex.encoding=THREE.sRGBEncoding;
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(W,D),new THREE.MeshStandardMaterial({map:tex,roughness:1,transparent:true}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;ground.position.y=.02;scene.add(ground);
+  const outer=new THREE.Mesh(new THREE.PlaneGeometry(900,900),new THREE.MeshStandardMaterial({color:0x5f7d45,roughness:1}));outer.rotation.x=-Math.PI/2;outer.position.y=-.05;outer.receiveShadow=true;scene.add(outer);
+  // hills + trees around
+  const hm=new THREE.MeshStandardMaterial({color:0x6c7a58,roughness:1,flatShading:true});
+  for(let i=0;i<14;i++){const a=i/14*Math.PI*2+.2,r=135+Math.random()*60;const h=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),hm);h.scale.set(28+Math.random()*22,7+Math.random()*10,24+Math.random()*16);h.position.set(Math.cos(a)*r*1.1,-2,Math.sin(a)*r*.9);h.castShadow=false;scene.add(h)}
+  const tg=new THREE.ConeGeometry(1.3,4.2,6),tm=new THREE.MeshStandardMaterial({color:0x4d6a45,roughness:1,flatShading:true});
+  const trees=new THREE.InstancedMesh(tg,tm,420);const m4=new THREE.Matrix4();let n=0;
+  while(n<420){const x=(Math.random()-.5)*340,z=(Math.random()-.5)*300;if(Math.abs(x)<76&&Math.abs(z)<58)continue;const s=.7+Math.random()*1.2;m4.compose(new THREE.Vector3(x,2*s,z),new THREE.Quaternion(),new THREE.Vector3(s,s,s));trees.setMatrixAt(n++,m4)}
+  trees.castShadow=true;scene.add(trees);
+
+  // sky dome, mountains, clouds, round trees
+  const skyMat=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,uniforms:{top:{value:new THREE.Color(0x4f86c6)},bot:{value:new THREE.Color(0xcfe0f0)}},
+    vertexShader:'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader:'uniform vec3 top;uniform vec3 bot;varying vec3 vP;void main(){float h=normalize(vP).y;gl_FragColor=vec4(mix(bot,top,smoothstep(.0,.55,h)),1.);}'});
+  const skyDome=new THREE.Mesh(new THREE.SphereGeometry(800,24,16),skyMat);scene.add(skyDome);
+  const mtM=new THREE.MeshStandardMaterial({color:0x5f7a68,roughness:1,flatShading:true}),mtM2=new THREE.MeshStandardMaterial({color:0x72898a,roughness:1,flatShading:true});
+  for(let i=0;i<34;i++){const a=i/34*Math.PI*2+Math.random()*.1,r=300+Math.random()*90;const hh=45+Math.random()*80;const m=new THREE.Mesh(new THREE.ConeGeometry(45+Math.random()*50,hh,7),i%2?mtM:mtM2);m.position.set(Math.cos(a)*r,hh/2-4,Math.sin(a)*r);m.rotation.y=Math.random()*6;scene.add(m)}
+  const cloudM=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.82,fog:false,depthWrite:false});const clouds=[];
+  for(let i=0;i<9;i++){const c=new THREE.Group();for(let k=0;k<4;k++){const s=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),cloudM);s.scale.set(14+Math.random()*10,4+Math.random()*3,8+Math.random()*5);s.position.set(k*13-20,Math.random()*2,Math.random()*5);c.add(s)}c.position.set((Math.random()-.5)*500,90+Math.random()*40,(Math.random()-.5)*500);scene.add(c);clouds.push(c)}
+  const rtG=new THREE.IcosahedronGeometry(1.7,0),rtM=new THREE.MeshStandardMaterial({color:0x6f9150,roughness:1,flatShading:true});
+  const rtrees=new THREE.InstancedMesh(rtG,rtM,260);let rn=0;const q4=new THREE.Matrix4();
+  while(rn<260){const x=(Math.random()-.5)*330,z=(Math.random()-.5)*290;if(Math.abs(x)<75&&Math.abs(z)<57)continue;const s=.8+Math.random()*1.1;q4.compose(new THREE.Vector3(x,1.8*s,z),new THREE.Quaternion(),new THREE.Vector3(s,s*1.15,s));rtrees.setMatrixAt(rn++,q4)}
+  rtrees.castShadow=true;scene.add(rtrees);
+  // houses
+  const baseM={},upM={},roofM=new THREE.MeshStandardMaterial({color:0x4b4742,roughness:.8});
+  TYPES.forEach(t=>{baseM[t.id]=new THREE.MeshStandardMaterial({color:new THREE.Color(t.color).lerp(new THREE.Color(0xd8cdbf),.35),roughness:.7,transparent:true});upM[t.id]=new THREE.MeshStandardMaterial({color:0xd7c6b3,roughness:.8,transparent:true})});
+  const bg=new THREE.BoxGeometry(1,1,1);const pick=[];const hgroups=[];const rot=-16*Math.PI/180;
+  HOUSES.forEach((h,idx)=>{
+    const g=new THREE.Group();const x=(h.x-.5)*W,z=(h.y-.5)*D;g.position.set(x,0,z);g.userData={h,idx};
+    if(h.r){const [w,d,a]=h.r;const hgt=h.t==='6'?3.4:2.4;const b=new THREE.Mesh(bg,baseM[h.t]);b.scale.set(w*S*.9,hgt,d*S*.9);b.position.y=hgt/2;g.add(b);const r=new THREE.Mesh(bg,roofM);r.scale.set(w*S*.92,.18,d*S*.92);r.position.y=hgt+.09;g.add(r);g.rotation.y=a*Math.PI/180;pick.push(b)}
+    else{const b=new THREE.Mesh(bg,baseM[h.t]);b.scale.set(2.1,1.5,2.4);b.position.y=.75;g.add(b);const u=new THREE.Mesh(bg,upM[h.t]);u.scale.set(1.7,1.2,1.8);u.position.set(.25,2.1,-.2);g.add(u);g.rotation.y=rot;pick.push(b,u);u.castShadow=true}
+    g.children.forEach(c=>{c.castShadow=true;c.receiveShadow=true;c.userData.g=g});scene.add(g);hgroups.push(g);
+  });
+  // orbit
+  const st={th:.65,ph:1.02,r:170,tx:0,tz:0,tr:100,fly:0};
+  function place(){const p=st.ph,t=st.th;cam.position.set(st.tx+st.r*Math.sin(p)*Math.sin(t),st.r*Math.cos(p),st.tz+st.r*Math.sin(p)*Math.cos(t));cam.lookAt(st.tx,0,st.tz)}
+  let drag=null,moved=0,pts=new Map(),pd=0;
+  cv.addEventListener('pointerdown',e=>{if(mode==='in')return;cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,pan:e.shiftKey||e.button===2};moved=0});
+  cv.addEventListener('contextmenu',e=>e.preventDefault());
+  cv.addEventListener('pointermove',e=>{
+    if(mode==='in')return;
+    if(pts.has(e.pointerId))pts.set(e.pointerId,[e.clientX,e.clientY]);
+    if(pts.size===2){const [a,b]=[...pts.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pd)st.tr=Math.min(190,Math.max(doll?5:18,st.tr*pd/d));pd=d;moved=9;return}
+    if(!drag){hover(e);return}
+    const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved+=Math.abs(dx)+Math.abs(dy);drag.x=e.clientX;drag.y=e.clientY;
+    if(drag.pan){const k=st.r*.0016;st.tx-=(Math.cos(st.th)*dx+Math.sin(st.th)*dy)*k;st.tz+=(Math.sin(st.th)*dx-Math.cos(st.th)*dy)*k}
+    else{st.th-=dx*.006;st.ph=Math.min(1.45,Math.max(.25,st.ph-dy*.005))}
+  });
+  const up=e=>{if(mode==='in')return;pts.delete(e.pointerId);pd=0;if(pts.size===0){if(drag&&moved<6)click(e);drag=null}};
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  cv.addEventListener('wheel',e=>{e.preventDefault();if(mode==='in')return;st.tr=Math.min(190,Math.max(doll?5:18,st.tr*(1+e.deltaY*.0012)))},{passive:false});
+  const ray=new THREE.Raycaster(),mv=new THREE.Vector2();
+  function hit(e){const b=cv.getBoundingClientRect();mv.set((e.clientX-b.left)/b.width*2-1,-((e.clientY-b.top)/b.height)*2+1);ray.setFromCamera(mv,cam);const r=ray.intersectObjects(pick,false);return r.length?r[0].object.userData.g:null}
+  function hover(e){cv.style.cursor=hit(e)?'pointer':'grab'}
+  let cur=null;const ring=new THREE.Mesh(new THREE.RingGeometry(2.1,2.6,40),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.visible=false;scene.add(ring);
+  const tag=$('#xtag'),panel=$('#xpanel');
+  function click(e){const g=hit(e);if(!g){cur=null;ring.visible=false;tag.style.display='none';panel.classList.remove('on');hideDoll();return}
+    cur=g;ring.position.set(g.position.x,.08,g.position.z);ring.visible=true;selectType(g.userData.h.t);showDoll(g);showPanel(g.userData.h.t)}
+  function showPanel(id){
+    const t=BY[id];let tab=0;
+    const draw=()=>{panel.innerHTML=`<button class="x" aria-label="Хаах">×</button><div class="eyebrow" style="color:#8a6a40">${t.kind}</div><h3>${lbl(t)}</h3><div style="font-size:13px;color:#6b6258;margin-top:4px">${areaTxt(t)} · Үнэ: лавлана уу</div>`+
+      (t.img?(doll&&doll.id===id?`<div class="tabs">${t.levels.map((l,i)=>`<button data-dl="${i}" class="${doll.lv===i?'on':''}">${l[0].replace(' давхар','')}</button>`).join('')}</div>`:'')+`<div class="tabs"><button data-k="0" class="${tab===0?'on':''}">Төлөвлөгөө</button><button data-k="1" class="${tab===1?'on':''}">Өрөөнүүд</button></div>`+
+      (tab===0?`<img src="img/${t.img}_plans.jpg" alt="Төлөвлөгөө">`:`<table>${t.levels.map(l=>`<tr><td colspan="2" style="padding-top:10px;font-weight:700">${l[0]}</td></tr>`+l[1].map(r=>`<tr><td>${r[0]}</td><td>${fmt(r[1])} м²</td></tr>`).join('')).join('')}</table>`)+`<button class="btn pri" id="pgo">Дотогш орох (3D) →</button>`
+      :`<p style="font-size:13px;color:#6b6258">Энэ загварын дэлгэрэнгүй зураг одоогоор байхгүй байна.</p>`);
+      panel.classList.add('on');$('.x',panel).onclick=()=>panel.classList.remove('on');
+      $$('.tabs button[data-k]',panel).forEach(b=>b.onclick=()=>{tab=+b.dataset.k;draw()});$$('.tabs button[data-dl]',panel).forEach(b=>b.onclick=()=>{if(doll){setDollLevel(+b.dataset.dl);doll.t0=performance.now()}draw()});const g=$('#pgo');if(g)g.onclick=()=>enterHouse(cur)};
+    draw();
+  }
+  tag.onclick=()=>{if(cur)enterHouse(cur)};
+
+  /* ===== 3D дотор тал (төлөвлөгөөний ханыг босгосон) ===== */
+  const iscene=new THREE.Scene();iscene.background=new THREE.Color(0xd9e6f2);
+  iscene.add(new THREE.HemisphereLight(0xffffff,0x5a4f44,.5));
+  const il=new THREE.DirectionalLight(0xfff3e0,.85);il.position.set(6,14,5);iscene.add(il);
+  const pl=new THREE.PointLight(0xffe2bd,1.1,10,1.2);iscene.add(pl);
+  const ig=new THREE.Group();iscene.add(ig);
+  const og=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshStandardMaterial({color:0xa9b394,roughness:1}));og.rotation.x=-Math.PI/2;og.position.y=-.35;iscene.add(og);
+  let PLANS=null;fetch('plans.json').then(r=>r.json()).then(d=>PLANS=d).catch(()=>{});
+  const wallM=new THREE.MeshStandardMaterial({color:0xe6ddd0,roughness:.95}),slabM=new THREE.MeshStandardMaterial({color:0xcfc6b9,roughness:.9}),ceilM=new THREE.MeshStandardMaterial({color:0xeae4dc,roughness:1,side:THREE.DoubleSide});
+  const LH=2.8,LS=3.1;
+  const I={type:null,lv:0,yaw:0,pitch:0,top:false,pos:new THREE.Vector3(),levels:[],keys:{}};
+  const fade=$('#fade'),hud=$('#ihud');window.__I=I;window.__cam=cam;
+  const texC={};const getTex=u=>texC[u]||(texC[u]=(()=>{const t=new THREE.TextureLoader().load(u);t.anisotropy=8;t.encoding=THREE.sRGBEncoding;return t})());
+  const MT=(c,r=.8)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
+  const FM={white:MT(0xf1eee8),wood:MT(0x9b7a55,.6),dark:MT(0x34302c),sofa:MT(0x6c7b8e,.95),bed:MT(0xe6dfd3,.95),head:MT(0x5b4636),car:MT(0x2d3946,.35),glass:MT(0x9ec1d6,.15),counter:MT(0xf2efe9),top:MT(0x39352f,.4),ward:MT(0xcdb894),tank:MT(0xbfc7cf,.4),stair:MT(0xd8d0c4),chair:MT(0x4a4540)};
+  const cyl=new THREE.CylinderGeometry(1,1,1,18);
+  function bx(g,mat,cx,y0,cz,w,h,d){const b=new THREE.Mesh(bg,mat);b.scale.set(w,h,d);b.position.set(cx,y0+h/2,cz);b.castShadow=true;b.receiveShadow=true;g.add(b);return b}
+  function furnish(g,p,list,cut){
+    const m=p.mpp;const solid=['bed','sofa','table','counter','island','car','wardrobe','desk','tank','tub'];
+    if(!p.col){p.col=list.filter(f=>solid.includes(f[0])).map(f=>[f[1],f[2],f[3],f[4]])}
+    list.forEach(([t,x,y,w,h,s])=>{
+      const cx=(x+w/2-p.w/2)*m,cz=(y+h/2-p.h/2)*m,W=w*m,H=h*m;
+      if(t==='car'){bx(g,FM.car,cx,.18,cz,W*.94,.55,H*.97);bx(g,FM.glass,cx,.73,cz+H*.04,W*.8,.45,H*.46);[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(q=>bx(g,FM.dark,cx+q[0]*W*.47,0,cz+q[1]*H*.3,.14,.4,.6))}
+      else if(t==='bed'){bx(g,FM.bed,cx,0,cz,W,.42,H);bx(g,FM.white,cx,.42,cz,W*.96,.14,H*.96);
+        const ns=s==='n'||s==='s',sg=(s==='n'||s==='w')?-1:1;
+        if(ns){bx(g,FM.head,cx,0,cz+sg*(H/2-.04),W,.95,.08);[-1,1].forEach(q=>bx(g,FM.white,cx+q*W*.22,.56,cz+sg*(H/2-.3),W*.34,.12,.3))}
+        else{bx(g,FM.head,cx+sg*(W/2-.04),0,cz,.08,.95,H);[-1,1].forEach(q=>bx(g,FM.white,cx+sg*(W/2-.3),.56,cz+q*H*.22,.3,.12,H*.34))}}
+      else if(t==='sofa'){bx(g,FM.sofa,cx,0,cz,W,.42,H);const ns=s==='n'||s==='s',sg=(s==='n'||s==='w')?-1:1;const tk=Math.min(.3,Math.min(W,H)*.3);
+        if(ns)bx(g,FM.sofa,cx,.42,cz+sg*(H/2-tk/2),W,.45,tk);else bx(g,FM.sofa,cx+sg*(W/2-tk/2),.42,cz,tk,.45,H)}
+      else if(t==='table'||t==='desk'){const co=W*H<1.4&&t==='table';const top=co?.36:.72;bx(g,FM.wood,cx,top,cz,W,.05,H);[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(q=>bx(g,FM.dark,cx+q[0]*(W/2-.05),0,cz+q[1]*(H/2-.05),.05,top,.05));
+        if(t==='table'&&!co){const long=W>H,n=Math.max(2,Math.round((long?W:H)/.75));for(let i=0;i<n;i++){const o=((i+.5)/n-.5)*(long?W:H);[-1,1].forEach(q=>long?bx(g,FM.chair,cx+o,0,cz+q*(H/2+.25),.4,.45,.4):bx(g,FM.chair,cx+q*(W/2+.25),0,cz+o,.4,.45,.4))}}
+        if(t==='desk')bx(g,FM.chair,cx,0,cz+Math.min(H/2+.3,.6),.42,.5,.42)}
+      else if(t==='counter'||t==='island'){bx(g,FM.counter,cx,0,cz,W,.88,H);bx(g,FM.top,cx,.88,cz,W+.02,.04,H+.02);
+        if(t==='island'){const n=Math.max(2,Math.round(W/.7));for(let i=0;i<n;i++)bx(g,FM.chair,cx+((i+.5)/n-.5)*W,0,cz+H/2+.3,.32,.62,.32)}}
+      else if(t==='wardrobe'){bx(g,FM.ward,cx,0,cz,W,cut?1.2:2.2,H)}
+      else if(t==='wc'){bx(g,FM.white,cx,0,cz+.05,.38,.4,.55);bx(g,FM.white,cx,.4,cz-.2,.38,.4,.18)}
+      else if(t==='sink'){bx(g,FM.counter,cx,0,cz,Math.min(W,.9),.85,.45);bx(g,FM.white,cx,.85,cz,Math.min(W,.9)*.7,.06,.32)}
+      else if(t==='tub'){const lw=W>H;bx(g,FM.white,cx,0,cz,lw?Math.min(W,1.8):Math.min(W,.85),.55,lw?Math.min(H,.85):Math.min(H,1.8))}
+      else if(t==='tank'){const r=Math.min(W,H)/2;const c=new THREE.Mesh(cyl,FM.tank);c.scale.set(r,1.6,r);c.position.set(cx,.8,cz);c.castShadow=true;g.add(c)}
+      else if(t==='stair'){const ex=s==='e'||s==='w',L=ex?W:H,n=Math.max(6,Math.min(14,Math.round(L/.28))),rise=cut?1.3:2.4,sg=(s==='e'||s==='s')?1:-1;
+        for(let i=0;i<n;i++){const sl=L/n,off=(-L/2+sl*(i+.5))*sg,hh=rise*(i+1)/n;if(ex)bx(g,FM.stair,cx+off,0,cz,sl,hh,H);else bx(g,FM.stair,cx,0,cz+off,W,hh,sl)}}
+    })
+  }
+  function makeHouse(id,cut){
+    const root=new THREE.Group(),levels=[],P=PLANS[BY[id].img];
+    P.forEach((p,i)=>{
+      const g=new THREE.Group();g.position.y=i*LS;const m=p.mpp,Wm=p.w*m,Hm=p.h*m;
+      const fl=new THREE.Mesh(new THREE.PlaneGeometry(Wm,Hm),new THREE.MeshStandardMaterial({map:getTex(p.tex),color:0x8a6a48,roughness:.6}));fl.rotation.x=-Math.PI/2;fl.position.y=.01;fl.receiveShadow=true;g.add(fl);
+      const sl=new THREE.Mesh(bg,slabM);sl.scale.set(Wm+.6,.3,Hm+.6);sl.position.y=-.15;sl.receiveShadow=true;g.add(sl);
+      const walls=new THREE.Group();g.add(walls);
+      p.rects.forEach(r=>{const w=r[2]*m,d=r[3]*m;const b=new THREE.Mesh(bg,wallM);b.scale.set(w,LH,d);b.position.set((r[0]+r[2]/2-p.w/2)*m,LH/2,(r[1]+r[3]/2-p.h/2)*m);b.castShadow=true;b.receiveShadow=true;walls.add(b)});
+      furnish(g,p,FURN[BY[id].img+'-'+i]||[],cut);
+      const ce=new THREE.Mesh(new THREE.PlaneGeometry(Wm,Hm),ceilM);ce.rotation.x=Math.PI/2;ce.position.y=LH;g.add(ce);
+      root.add(g);levels.push({g,ce,p,Wm,Hm,walls});
+    });
+    return{root,levels};
+  }
+  function buildHouse(id){
+    while(ig.children.length)ig.remove(ig.children[0]);
+    const h=makeHouse(id,false);ig.add(h.root);I.levels=h.levels;I.type=id;
+  }
+  /* ===== хотхон дээрх бяцхан загвар (dollhouse): байшин сонгоход томорч дотор нь харагдана ===== */
+  let doll=null;
+  function setDollLevel(i){doll.lv=i;doll.levels.forEach((l,k)=>{l.g.visible=k<=i;l.walls.scale.y=(k===i)?1.3/LH:1;l.ce.visible=k<i})}
+  function hideDoll(){if(!doll)return;scene.remove(doll.root);doll.g.visible=true;doll.hid.forEach(o=>o.visible=true);doll=null;st.fly=0}
+  function showDoll(g){
+    hideDoll();const id=g.userData.h.t;if(!BY[id].img||!PLANS||g.userData.h.r)return false;
+    const h=makeHouse(id,true),S=.3;h.root.scale.set(S,.001,S);h.root.rotation.y=rot;h.root.position.copy(g.position);h.root.position.y=.03;scene.add(h.root);
+    g.visible=false;doll={root:h.root,levels:h.levels,g,id,S,t0:performance.now(),lv:0,hid:[]};hgroups.forEach(o=>{if(o!==g&&!o.userData.h.r&&o.position.distanceTo(g.position)<4.6){o.visible=false;doll.hid.push(o)}});setDollLevel(Math.min(1,h.levels.length-1));
+    st.tx=g.position.x;st.tz=g.position.z;st.tr=8;st.ph=.55;st.fly=1;return true;
+  }
+  function setLevel(i){
+    const t=BY[I.type];I.lv=i;const L=I.levels[i],p=L.p;
+    I.levels.forEach((l,k)=>{l.g.visible=k<=i;l.ce.visible=(k<i)||(k===i&&!I.top)});
+    I.pos.set((p.start[0]-p.w/2)*p.mpp,i*LS+1.6,(p.start[1]-p.h/2)*p.mpp);
+    let best=0,by=0;for(let a=0;a<24;a++){const yw=a*Math.PI/12,dx=-Math.sin(yw),dy=-Math.cos(yw);let d=0,x=p.start[0],y=p.start[1];
+      for(;d<18;d+=.15){x+=dx*.15/p.mpp;y+=dy*.15/p.mpp;if(x<0||y<0||x>p.w||y>p.h)break;if(p.rects.some(r=>x>=r[0]&&x<=r[0]+r[2]&&y>=r[1]&&y<=r[1]+r[3]))break}
+      if(d>best){best=d;by=yw}}
+    I.yaw=by;I.pitch=-.12;
+    drawHud();
+  }
+  function drawHud(){
+    const t=BY[I.type];const lv=t.levels[I.lv];
+    hud.innerHTML=`<div class="ih-top"><button class="chip" id="iexit">← Хотхон руу</button><div class="ih-title"><div class="eyebrow">${lbl(t)} · ${t.kind}</div><b>${lv[0]}</b></div></div>
+    <div class="ih-lv">${t.levels.map((l,i)=>`<button class="chip ${i===I.lv?'on':''}" data-i="${i}">${l[0].replace(' давхар','')}</button>`).join('')}<button class="chip ${I.top?'on':''}" id="itop">${I.top?'Алхах':'Дээрээс'}</button></div>
+    <div class="ih-card"><div class="k">Өрөөнүүд</div><table>${lv[1].map(r=>`<tr><td>${r[0]}</td><td>${fmt(r[1])} м²</td></tr>`).join('')}</table></div>
+    <div class="ih-hint">Чирж эргэнэ · W A S D / сумаар алхана</div>
+    <div class="dpad"><button data-k="w">▲</button><button data-k="a">◀</button><button data-k="s">▼</button><button data-k="d">▶</button></div>`;
+    $('#iexit').onclick=exitHouse;
+    $$('.ih-lv [data-i]',hud).forEach(b=>b.onclick=()=>setLevel(+b.dataset.i));
+    $('#itop').onclick=()=>{I.top=!I.top;cam.fov=I.top?45:72;cam.updateProjection&&0;cam.updateProjectionMatrix();setLevel(I.lv)};
+    $$('.dpad button',hud).forEach(b=>{const k=b.dataset.k;const on=e=>{e.preventDefault();I.keys[k]=1};const off=()=>{I.keys[k]=0};b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off)});
+  }
+  function enterHouse(g){
+    const id=g.userData.h.t;
+    if(!BY[id].img){toast('Энэ загварын дотор талын мэдээлэл байхгүй байна');return}
+    if(!PLANS){toast('Төлөвлөгөө ачаалж байна, дахин оролдоно уу');return}
+    $('#xpanel').classList.remove('on');$('#xtag').style.display='none';
+    st.tx=g.position.x;st.tz=g.position.z;st.tr=7;st.ph=1.15;st.fly=1;
+    setTimeout(()=>{fade.style.opacity=1},750);
+    setTimeout(()=>{
+      buildHouse(id);I.top=false;I.yaw=0;I.pitch=0;cam.fov=72;cam.near=.05;cam.updateProjectionMatrix();mode='in';box.classList.add('inside');
+      setLevel(Math.min(1,I.levels.length-1));fade.style.opacity=0},1250);
+  }
+  function exitHouse(){
+    fade.style.opacity=1;
+    setTimeout(()=>{hideDoll();cur=null;ring.visible=false;mode='city';box.classList.remove('inside');cam.fov=42;cam.near=.5;cam.updateProjectionMatrix();st.tr=60;st.ph=1.0;st.fly=0;fade.style.opacity=0},400);
+  }
+  // look controls
+  let ld=null;
+  cv.addEventListener('pointerdown',e=>{if(mode!=='in')return;cv.setPointerCapture(e.pointerId);ld={x:e.clientX,y:e.clientY}});
+  cv.addEventListener('pointermove',e=>{if(mode!=='in'||!ld)return;I.yaw-=(e.clientX-ld.x)*.005;I.pitch=Math.max(-1.2,Math.min(1.2,I.pitch-(e.clientY-ld.y)*.004));ld={x:e.clientX,y:e.clientY}});
+  const lu=()=>{ld=null};cv.addEventListener('pointerup',lu);cv.addEventListener('pointercancel',lu);
+  addEventListener('keydown',e=>{if(mode!=='in')return;const k={w:'w',a:'a',s:'s',d:'d',arrowup:'w',arrowleft:'a',arrowdown:'s',arrowright:'d'}[e.key.toLowerCase()];if(k){I.keys[k]=1;e.preventDefault()}});
+  addEventListener('keyup',e=>{const k={w:'w',a:'a',s:'s',d:'d',arrowup:'w',arrowleft:'a',arrowdown:'s',arrowright:'d'}[e.key.toLowerCase()];if(k)I.keys[k]=0});
+  let lastT=performance.now();
+  function stepIn(){
+    const now=performance.now(),dt=Math.min(.05,(now-lastT)/1000);lastT=now;
+    const L=I.levels[I.lv],p=L.p;
+    if(I.top){
+      const R=Math.max(L.Wm,L.Hm)*1.8;cam.position.set(Math.sin(I.yaw)*R*.55,I.lv*LS+R*.9,Math.cos(I.yaw)*R*.55);cam.lookAt(0,I.lv*LS,0);
+      I.yaw+=((I.keys.a?1:0)-(I.keys.d?1:0))*dt*1.2;pl.position.set(0,I.lv*LS+6,0);return}
+    const f=(I.keys.w?1:0)-(I.keys.s?1:0),s=(I.keys.d?1:0)-(I.keys.a?1:0);
+    if(f||s){const sp=2.4*dt;const dx=(-Math.sin(I.yaw)*f+Math.cos(I.yaw)*s)*sp,dz=(-Math.cos(I.yaw)*f-Math.sin(I.yaw)*s)*sp;I.pos.x+=dx;I.pos.z+=dz}
+    // collide (px space)
+    let px=I.pos.x/p.mpp+p.w/2,py=I.pos.z/p.mpp+p.h/2;const rad=.28/p.mpp;
+    const CR=p.rects.concat(p.col||[]);for(let it=0;it<2;it++)for(const r of CR){const cx=Math.max(r[0],Math.min(px,r[0]+r[2])),cy=Math.max(r[1],Math.min(py,r[1]+r[3]));let ddx=px-cx,ddy=py-cy;const d2=ddx*ddx+ddy*ddy;
+      if(d2<rad*rad){if(d2>1e-6){const d=Math.sqrt(d2);px+=ddx/d*(rad-d);py+=ddy/d*(rad-d)}else{px+=rad}}}
+    px=Math.max(3,Math.min(p.w-3,px));py=Math.max(3,Math.min(p.h-3,py));
+    I.pos.x=(px-p.w/2)*p.mpp;I.pos.z=(py-p.h/2)*p.mpp;
+    cam.position.set(I.pos.x,I.lv*LS+1.6,I.pos.z);cam.rotation.set(I.pitch,I.yaw,0,'YXZ');pl.position.set(I.pos.x,I.lv*LS+2.3,I.pos.z);
+  }
+  // chips + sun
+  const hours=7;
+  $('#xpill').innerHTML=`<button class="chip on" data-id="all">Бүгд</button>`+FULL.map(t=>`<button class="chip" data-id="${t.id}">${t.id}</button>`).join('')+`<label class="sun" for="sunr" style="margin:0;text-transform:none;letter-spacing:0;display:flex">Нар <input id="sunr" type="range" min="0" max="100" value="55"><b id="sunt" style="color:var(--fg);font-weight:600;min-width:42px"></b></label>`;
+  let filt='all';
+  $('#xpill').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;filt=c.dataset.id;applyFilt();if(filt!=='all'){selectType(filt)}};
+  function applyFilt(){$$('#xpill .chip').forEach(c=>c.classList.toggle('on',c.dataset.id===filt));TYPES.forEach(t=>{const on=filt==='all'||t.id===filt;baseM[t.id].opacity=on?1:.13;upM[t.id].opacity=on?1:.13;baseM[t.id].depthWrite=on;upM[t.id].depthWrite=on})}
+  xpSync=()=>{if(filt!=='all'&&filt!==sel){filt='all';applyFilt()}};
+  const sky=[new THREE.Color(0xf0a77a),new THREE.Color(0x9cc3ea),new THREE.Color(0xe8946b)];
+  function setSun(v){const t=v/100;const a=t*Math.PI;const el=Math.sin(a)*1.0+.12;
+    sun.position.set(Math.cos(a)*-120,Math.max(.12,el)*120,40);sun.intensity=.25+Math.sin(a)*.85;
+    const c=t<.5?sky[0].clone().lerp(sky[1],Math.min(1,t*3)):sky[1].clone().lerp(sky[2],Math.max(0,(t-.6)*2.5));
+    scene.background=c;scene.fog=new THREE.Fog(c,260,1000);skyMat.uniforms.bot.value.copy(c);skyMat.uniforms.top.value.setHSL(.6,.55,.28+Math.sin(a)*.22);mtM.color.copy(c).lerp(new THREE.Color(0x4f6b58),.55);mtM2.color.copy(c).lerp(new THREE.Color(0x5e7782),.5);hemi.intensity=.3+Math.sin(a)*.35;sun.color.setHSL(.09,.7,.5+Math.sin(a)*.4);
+    const hh=hours+t*12;$('#sunt').textContent=String(Math.floor(hh)).padStart(2,'0')+':'+String(Math.floor(hh%1*60)).padStart(2,'0')}
+  $('#sunr').oninput=e=>setSun(+e.target.value);setSun(55);applyFilt();
+  function size(){const w=box.clientWidth,h=box.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+  addEventListener('resize',size);size();if(cam.aspect<1){st.tr=150;st.r=200}
+  let vis=false;new IntersectionObserver(es=>vis=es[0].isIntersecting,{threshold:.01}).observe(box);
+  const v=new THREE.Vector3();
+  let loopErr=false;
+  (function loop(){requestAnimationFrame(loop);if(!vis||loopErr)return;try{
+    if(mode==='in'){stepIn();renderer.render(iscene,cam);return}
+    clouds.forEach(c=>{c.position.x+=.03;if(c.position.x>260)c.position.x=-260});
+    if(doll){const k=Math.min(1,(performance.now()-doll.t0)/1000),e=1-Math.pow(1-k,3);doll.root.scale.y=doll.S*(.001+e)}
+    st.r+=(st.tr-st.r)*(st.fly?.09:.06);if(st.fly){st.tx+=0;}if(!drag&&!cur&&!st.fly)st.th+=.0007;place();renderer.render(scene,cam);
+    if(cur){v.copy(cur.position);v.y=4;v.project(cam);const w=box.clientWidth,h=box.clientHeight;tag.style.display=v.z<1?'block':'none';tag.style.left=(v.x*.5+.5)*w+'px';tag.style.top=(-v.y*.5+.5)*h+'px'}
+  }catch(err){loopErr=true;fb('3D алдаа гарлаа: '+(err&&err.message||err))}})();
+}
+
+/* ---------- INTERIOR ---------- */
+function buildInterior(reset){
+  const t=BY[sel];if(!t.img)return;
+  $('#itypes').innerHTML=FULL.map(x=>`<button class="chip ${x.id===sel?'on':''}" data-id="${x.id}">${x.id}</button>`).join('');
+  $('#ibg').src='img/'+t.img+'_render.jpg';
+  const cards=[{k:'Гадна төрх',h:lbl(t)+' · '+t.kind,rows:[['Нийт талбай',areaTxt(t)],['Түвшин',t.levels.length+' давхар/зоорь']]}].concat(t.levels.map(l=>({k:'Давхрын байгууламж',h:l[0],rows:l[1].slice().sort((a,b)=>b[1]-a[1]).slice(0,4).map(r=>[r[0],fmt(r[1])+' м²'])})));
+  buildInterior.cards=cards;
+  $('#idots').innerHTML=cards.map(()=>'<i></i>').join('');
+  buildInterior.idx=-1;onScroll();
+}
+$('#itypes').onclick=e=>{const c=e.target.closest('.chip');if(c)selectType(c.dataset.id)};
+function setCard(i){
+  const cs=buildInterior.cards;if(!cs||i===buildInterior.idx)return;buildInterior.idx=i;const c=cs[i],el=$('#icard');
+  el.classList.add('sw');setTimeout(()=>{el.innerHTML=`<div class="k">${c.k}</div><h3>${c.h}</h3><table>${c.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>`;el.classList.remove('sw')},i<0?0:200);
+  $$('#idots i').forEach((d,k)=>d.classList.toggle('on',k===i));$('#icnt').textContent=String(i+1).padStart(2,'0')+' / '+String(cs.length).padStart(2,'0');
+}
+
+/* ---------- FLOORS ---------- */
+let lv=0;
+function buildFloors(){
+  const t=BY[sel];if(!t.img)return;lv=Math.min(lv,t.levels.length-1);
+  $('#fChips').innerHTML=FULL.map(x=>`<button class="chip ${x.id===sel?'on':''}" data-id="${x.id}">${x.id}</button>`).join('');
+  $('#isoimg').src='img/'+t.img+'_iso.jpg';$('#sheetimg').src='img/'+t.img+'_plans.jpg';
+  $('#lvtabs').innerHTML=t.levels.map((l,i)=>`<button class="chip ${i===lv?'on':''}" data-i="${i}">${l[0]}</button>`).join('');
+  const L=t.levels[lv][1];const tot=L.reduce((s,r)=>s+r[1],0);
+  $('#rooms').innerHTML=L.map(r=>`<tr><td>${r[0]}</td><td>${fmt(r[1])} м²</td></tr>`).join('')+`<tr class="tot"><td>Өрөөний нийлбэр</td><td>${fmt(tot)} м²</td></tr>`;
+}
+$('#fChips').onclick=e=>{const c=e.target.closest('.chip');if(c)selectType(c.dataset.id)};
+$('#lvtabs').onclick=e=>{const c=e.target.closest('.chip');if(c){lv=+c.dataset.i;buildFloors()}};
+$('#sheet').onclick=()=>lightbox($('#sheetimg').src);
+
+/* ---------- scroll ---------- */
+function prog(el){const r=el.getBoundingClientRect();return Math.min(1,Math.max(0,-r.top/(r.height-innerHeight)))}
+function onScroll(){
+  const p=prog($('#hero'));setHero(Math.min(HERO.length-1,Math.floor(p*HERO.length)));$('#hProg').style.width=(p*100)+'%';
+  const q=prog($('#interior'));const cs=buildInterior.cards;
+  if(cs){setCard(Math.min(cs.length-1,Math.floor(q*cs.length)));
+    $('#ibg').style.transform=`translate3d(${(.5-q)*-5}%,0,0) scale(${1+q*.18})`}
+}
+addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);
+
+/* ---------- form ---------- */
+$('#ft').innerHTML=TYPES.map(t=>`<option value="${t.id}">${lbl(t)} · ${areaTxt(t)}</option>`).join('');
+$('#form').onsubmit=e=>{e.preventDefault();toast('Демо: хүсэлтийг хүлээн авлаа гэж үзнэ (хаана ч илгээгдээгүй)');e.target.reset();$('#ft').value=sel};
+
+/* ---------- boot ---------- */
+setHero(0);selectType('1');onScroll();
+try{if(window.THREE)initXP();else{$('#xfb').style.display='grid'}}catch(e){const f=$('#xfb');f.style.display='grid';f.textContent='3D ачаалж чадсангүй: '+e.message}
+
+</script>
+</body>
+</html>
